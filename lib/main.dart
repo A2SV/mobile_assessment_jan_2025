@@ -11,14 +11,7 @@ import 'providers/favorites_provider.dart';
 
 void main() {
   setUpDependencies();
-  runApp(
-    ScreenUtilInit(
-      designSize: const Size(375, 812),
-      minTextAdapt: true,
-      splitScreenMode: true,
-      builder: (context, child) => const MyApp(),
-    ),
-  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -26,28 +19,35 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => CartProvider()),
-        ChangeNotifierProvider(create: (_) => FavoritesProvider()),
-      ],
-      child: MaterialApp(
-        title: 'E-commerce App',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          fontFamily: GoogleFonts.poppins().fontFamily,
-          scaffoldBackgroundColor: Colors.white,
-          appBarTheme: const AppBarTheme(
-            backgroundColor: Colors.white,
-            elevation: 0,
+    return ScreenUtilInit(
+      designSize: const Size(375, 812),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (_) => CartProvider()),
+            ChangeNotifierProvider(create: (_) => FavoritesProvider()),
+          ],
+          child: MaterialApp(
+            title: 'E-commerce App',
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              fontFamily: GoogleFonts.poppins().fontFamily,
+              scaffoldBackgroundColor: Colors.white,
+              appBarTheme: const AppBarTheme(
+                backgroundColor: Colors.white,
+                elevation: 0,
+              ),
+              primarySwatch: Colors.blue,
+            ),
+            home: const HomeScreen(),
+            routes: {
+              CartScreen.routeName: (ctx) => const CartScreen(),
+            },
           ),
-          primarySwatch: Colors.blue,
-        ),
-        home: const HomeScreen(),
-        routes: {
-          CartScreen.routeName: (ctx) => const CartScreen(),
-        },
-      ),
+        );
+      },
     );
   }
 }
