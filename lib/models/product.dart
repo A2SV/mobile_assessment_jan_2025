@@ -30,4 +30,31 @@ class Product {
       rating: Rating(rate: 0, count: 0),
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'id': id,
+      'title': title,
+      'price': price,
+      'image': image,
+      'description': description,
+      'category': category,
+      'rating': rating.toMap(),
+    };
+  }
+
+  factory Product.fromMap(Map<String, dynamic> map) {
+    return Product(
+      id: map['id'] as int,
+      title: map['title'] as String,
+      price: double.parse(map['price'].toString()),
+      image: map['image'] as String,
+      description: map['description'] as String,
+      category: map['category'] as String,
+      rating: Rating.fromMap(map['rating'] as Map<String, dynamic>),
+    );
+  }
+
+  static listProvider(List<dynamic> data) =>
+      data.map((e) => Product.fromMap(e)).toList();
 }

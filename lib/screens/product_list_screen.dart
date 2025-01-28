@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_assessment_jan_2025/app/common/ui_helpers.dart';
+import 'package:mobile_assessment_jan_2025/widgets/custome_list_widget.dart';
 import '../models/product.dart';
 import '../services/api_service.dart';
 
@@ -50,50 +52,52 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
     if (_errorMessage != null) {
       return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              _errorMessage!,
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.red, fontSize: 16),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _loadProducts,
-              child: const Text('Retry'),
-            ),
-          ],
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Text(
+          _errorMessage!,
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: Colors.red, fontSize: 16),
         ),
-      );
+        const SizedBox(height: 16),
+        ElevatedButton(onPressed: _loadProducts, child: const Text('Retry'))
+      ]));
     }
 
     if (_products.isEmpty) {
       return const Center(
-        child: Text(
-          'No products found.',
-          style: TextStyle(fontSize: 16),
-        ),
-      );
+          child: Text('No products found.', style: TextStyle(fontSize: 16)));
     }
 
     return ListView.builder(
       itemCount: _products.length,
       itemBuilder: (context, index) {
         final product = _products[index];
-        return InkWell(
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => ProductDetailScreen(product: product),
+        return Padding(
+          padding: const EdgeInsets.symmetric(
+              horizontal: middleSize, vertical: tinySize),
+          child: CustomeListWidget(
+            product: product,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ProductDetailScreen(product: product),
+              ),
             ),
           ),
-          child: ListTile(
-            leading: Image.network(product.image, width: 50, height: 50),
-            title: Text(product.title),
-            subtitle: Text('\$${product.price.toStringAsFixed(2)}'),
-          ),
         );
+        // return InkWell(
+        //   onTap: () => Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //       builder: (_) => ProductDetailScreen(product: product),
+        //     ),
+        //   ),
+        //   child: ListTile(
+        //     leading: Image.network(product.image, width: 50, height: 50),
+        //     title: Text(product.title),
+        //     subtitle: Text('\$${product.price.toStringAsFixed(2)}'),
+        //   ),
+        // );
       },
     );
   }

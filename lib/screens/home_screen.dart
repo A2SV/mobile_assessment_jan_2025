@@ -15,7 +15,9 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Products'),
         actions: [
-          ListenableBuilder(
+          Padding(
+            padding: const EdgeInsets.only(right: 20),
+            child: ListenableBuilder(
               listenable: cartProvider,
               builder: (context, child) {
                 return Badge.count(
@@ -29,7 +31,9 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                 );
-              })
+              },
+            ),
+          )
         ],
       ),
       body: const ProductListScreen(),

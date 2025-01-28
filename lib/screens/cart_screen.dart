@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_assessment_jan_2025/app/common/app_text_style.dart';
+import 'package:mobile_assessment_jan_2025/app/common/ui_helpers.dart';
+import 'package:mobile_assessment_jan_2025/widgets/custom_button.dart';
+import 'package:mobile_assessment_jan_2025/widgets/custom_dialog.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
 import '../widgets/cart_item.dart';
@@ -11,6 +15,55 @@ class CartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
+
+    showConfimrationDialog() {
+      return CustomDialog.show(
+          context: context,
+          dismissible: false,
+          widget: Container(
+            padding: EdgeInsets.all(middleSize),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(middleSize)),
+              color: Colors.white,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('Are you sure you want to order the product?',
+                    style: bold),
+                verticalSpaceMiddle,
+                Row(
+                  children: [
+                    Expanded(
+                        child: CustomButton(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      text: 'No',
+                      color: Colors.grey,
+                    )),
+                    horizontalSpaceSmall,
+                    Expanded(
+                      child: CustomButton(
+                          onTap: () {
+                            // confirmed.
+                            Navigator.pop(context);
+                            // clear the cart
+                            cartProvider.clearCart();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text('Order placed successfully!')),
+                            );
+                            Navigator.pop(context);
+                          },
+                          text: 'Yes'),
+                    )
+                  ],
+                )
+              ],
+            ),
+          ));
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -36,16 +89,9 @@ class CartScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        'Total',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      // TODO: Replace with actual total price calculation
+                      Text('Total', style: extraBold.copyWith(fontSize: 20)),
                       Text(
-                        'totalPrice',
+                        '\$${cartProvider.totalPrice.toStringAsFixed(2)}',
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -54,26 +100,17 @@ class CartScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: cartProvider.cart.items.isEmpty
+                  CustomButton(
+                    onTap: cartProvider.cart.items.isEmpty
                         ? null
                         : () {
                             // TODO: Implement checkout flow
+                            showConfimrationDialog();
                             // 1. Show a confirmation dialog
                             // 2. Clear the cart if confirmed
                             // 3. Show a success message (SnackBar)
                           },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange[900],
-                      minimumSize: const Size(double.infinity, 50),
-                    ),
-                    child: const Text(
-                      'ORDER NOW',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    text: 'ORDER NOW',
                   ),
                 ],
               ),
