@@ -34,14 +34,6 @@ API Integration, Cart Functionality, UI/UX enhancements and add a new feature wh
                <img width="1604" alt="screen shot 2017-08-07 at 12 18 15 pm" src="https://i.postimg.cc/cLwPYWSm/Screenshot-2025-01-28-at-11-27-16-in-the-morning.png">
             </td>
         </tr>
-        <tr>
-            <td>
-                <img width="1604" alt="screen shot 2017-08-07 at 12 18 15 pm" src="https://i.postimg.cc/cJm6Fzkn/Simulator-Screenshot-Iphone-14-Pro-2023-10-26-at-16-52-31.png">
-            </td>
-            <td>
-              <img width="1604" alt="screen shot 2017-08-07 at 12 18 15 pm" src="https://i.postimg.cc/JhmGc8x8/Simulator-Screenshot-Iphone-14-Pro-2023-10-26-at-16-53-02.png">
-            </td>
-        </tr>
     </tbody>
 </table>
 
