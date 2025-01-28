@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mobile_assessment_jan_2025/screens/cart/bloc/cart_bloc.dart';
 import '../models/cart.dart';
-import '../providers/cart_provider.dart';
 
 class CartItemWidget extends StatelessWidget {
   final CartItem cartItem;
@@ -30,6 +30,7 @@ class CartItemWidget extends StatelessWidget {
       ),
       direction: DismissDirection.endToStart,
       onDismissed: (direction) {
+        context.read<CartBloc>().add(RemoveFromCart(product: cartItem.product));
         // TODO:  remove an item from the cart
         // and make sure the item is removed from the cart
       },
