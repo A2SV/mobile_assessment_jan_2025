@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_assessment_jan_2025/constants/app_colors.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
 import '../widgets/cart_item.dart';
@@ -57,14 +58,46 @@ class CartScreen extends StatelessWidget {
                   ElevatedButton(
                     onPressed: cartProvider.cart.items.isEmpty
                         ? null
-                        : () {
-                            // TODO: Implement checkout flow
-                            // 1. Show a confirmation dialog
-                            // 2. Clear the cart if confirmed
-                            // 3. Show a success message (SnackBar)
+                        : () async {
+                            final shouldProceed = await showDialog<bool>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('Confirm Checkout'),
+                                  content: const Text(
+                                      'Are you sure you want to place the order?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context)
+                                            .pop(false); // Return false
+                                      },
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context)
+                                            .pop(true); // Return true
+                                      },
+                                      child: const Text('Confirm'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+
+                            if (shouldProceed == true) {
+                              // Clear the cart and show a success message
+                              cartProvider.clearCart();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Order placed successfully!'),
+                                ),
+                              );
+                            }
                           },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange[900],
+                      backgroundColor: primaryColor,
                       minimumSize: const Size(double.infinity, 50),
                     ),
                     child: const Text(

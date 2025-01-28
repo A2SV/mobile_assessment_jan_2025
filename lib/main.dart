@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mobile_assessment_jan_2025/screens/favourites_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/cart_provider.dart';
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
         home: const HomeScreen(),
         routes: {
           CartScreen.routeName: (ctx) => const CartScreen(),
+          FavouritesScreen.routeName: (ctx) => const FavouritesScreen(),
         },
       ),
     );
