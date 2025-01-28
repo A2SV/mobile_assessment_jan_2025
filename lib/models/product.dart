@@ -23,11 +23,23 @@ class Product {
     return Product(
       id: -1,
       title: "Empty",
-      price: 0,
+      price: 0.0,
       image: "",
       description: "This is default description",
       category: "None",
       rating: Rating(rate: 0, count: 0),
+    );
+  }
+
+  factory Product.fromJson(Map<String, dynamic> json) {
+    return Product(
+      id: json['id'],
+      title: json['title'],
+      price: json['price'].toDouble(),
+      image: json['image'],
+      description: json['description'],
+      category: json['category'],
+      rating: Rating.fromJson(json['rating']),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_assessment_jan_2025/providers/cart_provider.dart';
+import 'package:mobile_assessment_jan_2025/screens/favorites_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'cart_screen.dart';
@@ -29,7 +30,15 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                 );
-              })
+              }),
+          IconButton(
+            icon: const Icon(Icons.favorite),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const FavoritesScreen()),
+            ),
+          ),
+          const SizedBox(width: 16),
         ],
       ),
       body: const ProductListScreen(),

@@ -12,4 +12,7 @@ class CartItem {
 
 class Cart {
   List<CartItem> items = [];
+  double get totalPrice {
+    return items.fold(0.0, (total, item) => total + (item.product.price * item.quantity));
+  }
 }
