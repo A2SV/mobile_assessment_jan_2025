@@ -4,11 +4,18 @@ import '../models/product.dart';
 
 class CartProvider extends ChangeNotifier {
   final Cart _cart = Cart();
+  final List<Product> _favorites = [];
 
   Cart get cart => _cart;
 
+  List<Product> get favorites => _favorites;
+
+  double get totalPrice {
+    return _cart.items
+        .fold(0.0, (sum, item) => sum + item.product.price * item.quantity);
+  }
+
   void addToCart(Product product, {int quantity = 1}) {
-    // Provided as a hint
     final existingItem = _cart.items.firstWhere(
       (item) => item.product.id == product.id,
       orElse: () => CartItem(product: Product.empty(), quantity: 0),
@@ -23,19 +30,40 @@ class CartProvider extends ChangeNotifier {
   }
 
   void removeFromCart(int productId) {
-    // TODO: Remove item with matching productId from cart
-
+    _cart.items.removeWhere((item) => item.product.id == productId);
     notifyListeners();
   }
 
   void updateQuantity(int productId, int newQuantity) {
-    // TODO: Update quantity for item with productId
-    // TODO: If quantity <= 0, remove the item
-    notifyListeners();
+    final item = _cart.items.firstWhere((item) => item.product.id == productId,
+        orElse: () => CartItem(product: Product.empty(), quantity: 0));
+    if (item.product.id != -1) {
+      if (newQuantity <= 0) {
+        removeFromCart(productId);
+      } else {
+        item.quantity = newQuantity;
+        notifyListeners();
+      }
+    }
   }
 
   void clearCart() {
-    // TODO: Clear the cart
+    _cart.items.clear();
     notifyListeners();
+  }
+
+  void toggleFavorite(Product product) {
+    if (_favorites.any((p) => p.id == product.id)) {
+      _favorites.removeWhere((p) => p.id == product.id);
+      product.isFavorite = false;
+    } else {
+      _favorites.add(product);
+      product.isFavorite = true;
+    }
+    notifyListeners();
+  }
+
+  List<Product> getFavoriteProducts() {
+    return _favorites;
   }
 }

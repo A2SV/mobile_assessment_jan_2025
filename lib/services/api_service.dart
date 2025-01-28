@@ -1,17 +1,36 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import '../models/product.dart';
-import '../models/cart.dart';
 
 class ApiService {
   static const String _baseUrl = 'https://fakestoreapi.com';
+  final http.Client client;
+
+  ApiService._singleton(this.client);
+  static final ApiService instance = ApiService._singleton(http.Client());
 
   Future<List<Product>> fetchProducts() async {
-    // TODO: Fetch products from $_baseUrl/products
-    //  Parse JSON response into List<Product>
-    //  Handle errors (e.g., non-200 status codes)
-    // https://fakestoreapi.com/docs for reference
+    try {
+      print('Fetching products from $_baseUrl/products');
+      http.Response response = await client.get(
+        Uri.parse('$_baseUrl/products'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
 
-    throw UnimplementedError();
+      print('Received response: ${response.statusCode}');
+      if (response.statusCode == 200) {
+        List<dynamic> data = jsonDecode(response.body);
+        List<Product> products = data.map((e) => Product.fromJson(e)).toList();
+        return products;
+      } else {
+        throw HttpException('Failed to load products: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching products: $e');
+      rethrow;
+    }
   }
 }

@@ -132,3 +132,37 @@ Empty cart, invalid quantities, network failures.
 #### Ask Questions: If anything is unclear, don’t hesitate to ask!
 
 ## Good luck! 🚀
+
+> > > > > > > bcb13432c476e93c5f8bc5095f17cfc38858a69f
+
+# App ScreenShots
+
+## Home Screen
+
+![alt text](image.png)
+
+## Home Screen with the cart and fav count
+
+![alt text](image-1.png)
+
+## Fav Screen
+
+![alt text](image-2.png)
+
+## Product Detail Screen
+
+![alt text](image-3.png)
+
+## Cart
+
+![alt text](image-4.png)
+
+## Order Confirmation
+
+![alt text](image-5.png)
+
+## Checkout(Success Screen)
+
+![alt text](image-6.png)
+
+## Name - Amanuel Awol

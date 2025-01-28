@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_assessment_jan_2025/screens/checkout_screen.dart';
+import 'package:mobile_assessment_jan_2025/widgets/checkout_card.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
 import '../widgets/cart_item.dart';
@@ -13,74 +15,44 @@ class CartScreen extends StatelessWidget {
     final cartProvider = Provider.of<CartProvider>(context);
 
     return Scaffold(
+      backgroundColor: Colors.white, // Updated background color
       appBar: AppBar(
-        title: const Text('Your Cart'),
-        centerTitle: true,
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: cartProvider.cart.items.length,
-              itemBuilder: (ctx, i) => CartItemWidget(
-                cartItem: cartProvider.cart.items[i],
+        backgroundColor: Colors.white, // Updated AppBar color
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start, // Align text to start
+          children: [
+            const Text(
+              "Your Cart",
+              style: TextStyle(color: Colors.black),
+            ),
+            Consumer<CartProvider>(
+              builder: (ctx, cart, child) => Text(
+                "${cart.cart.items.length} items",
+                style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
-          ),
-          Card(
-            margin: const EdgeInsets.all(15),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Total',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      // TODO: Replace with actual total price calculation
-                      Text(
-                        'totalPrice',
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: cartProvider.cart.items.isEmpty
-                        ? null
-                        : () {
-                            // TODO: Implement checkout flow
-                            // 1. Show a confirmation dialog
-                            // 2. Clear the cart if confirmed
-                            // 3. Show a success message (SnackBar)
-                          },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange[900],
-                      minimumSize: const Size(double.infinity, 50),
-                    ),
-                    child: const Text(
-                      'ORDER NOW',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
+        iconTheme:
+            const IconThemeData(color: Colors.black), // Set AppBar icon color
       ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: cartProvider.cart.items.isEmpty
+            ? const Center(
+                child: Text('Your cart is empty'),
+              )
+            : ListView.builder(
+                itemCount: cartProvider.cart.items.length,
+                itemBuilder: (ctx, i) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: CartItemWidget(
+                    cartItem: cartProvider.cart.items[i],
+                  ),
+                ),
+              ),
+      ),
+      bottomNavigationBar: const CheckoutCard(),
     );
   }
 }

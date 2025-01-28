@@ -8,6 +8,7 @@ class Product {
   final String description;
   final String category;
   final Rating rating;
+  bool isFavorite;
 
   Product({
     required this.id,
@@ -17,17 +18,30 @@ class Product {
     required this.description,
     required this.category,
     required this.rating,
+    this.isFavorite = false,
   });
 
   factory Product.empty() {
     return Product(
-      id: -1,
-      title: "Empty",
-      price: 0,
-      image: "",
-      description: "This is default description",
-      category: "None",
-      rating: Rating(rate: 0, count: 0),
+        id: -1,
+        title: "Empty",
+        price: 0,
+        image: "",
+        description: "This is default description",
+        category: "None",
+        rating: Rating(rate: 0, count: 0),
+        isFavorite: false);
+  }
+
+  factory Product.fromJson(Map<String, dynamic> json) {
+    return Product(
+      id: json['id'],
+      title: json['title'],
+      price: json['price'].toDouble(),
+      image: json['image'],
+      description: json['description'],
+      category: json['category'],
+      rating: Rating.fromJson(json['rating']),
     );
   }
 }
