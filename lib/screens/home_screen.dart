@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import 'cart_screen.dart';
 import 'product_list_screen.dart';
+import 'favorites_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -15,6 +16,13 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Products'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.favorite),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const FavoritesScreen()),
+            ),
+          ),
           ListenableBuilder(
               listenable: cartProvider,
               builder: (context, child) {

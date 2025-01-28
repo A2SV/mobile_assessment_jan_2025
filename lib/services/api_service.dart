@@ -1,17 +1,6 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import '../models/product.dart';
-import '../models/cart.dart';
+ import 'package:mobile_assessment_jan_2025/core/handlers/api_result.dart';
+import 'package:mobile_assessment_jan_2025/models/product.dart';
 
-class ApiService {
-  static const String _baseUrl = 'https://fakestoreapi.com';
-
-  Future<List<Product>> fetchProducts() async {
-    // TODO: Fetch products from $_baseUrl/products
-    //  Parse JSON response into List<Product>
-    //  Handle errors (e.g., non-200 status codes)
-    // https://fakestoreapi.com/docs for reference
-
-    throw UnimplementedError();
-  }
+abstract class ApiService {
+  Future<ApiResult<List<Product>>> fetchProducts();
 }
