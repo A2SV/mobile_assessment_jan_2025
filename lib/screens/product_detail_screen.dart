@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../models/product.dart';
 import '../providers/cart_provider.dart';
 import 'cart_screen.dart';
+import '../providers/favorites_provider.dart';
 
 class ProductDetailScreen extends StatelessWidget {
   final Product product;
@@ -14,6 +15,7 @@ class ProductDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context, listen: false);
+    final favoritesProvider = Provider.of<FavoritesProvider>(context, listen: false);
     
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -25,6 +27,29 @@ class ProductDetailScreen extends StatelessWidget {
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
+          Consumer<FavoritesProvider>(
+            builder: (context, favoritesProvider, _) => IconButton(
+              icon: Icon(
+                favoritesProvider.isFavorite(product)
+                    ? Icons.favorite
+                    : Icons.favorite_border,
+                color: Colors.red,
+              ),
+              onPressed: () {
+                favoritesProvider.toggleFavorite(product);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      favoritesProvider.isFavorite(product)
+                          ? 'Added to favorites'
+                          : 'Removed from favorites',
+                    ),
+                    duration: const Duration(seconds: 1),
+                  ),
+                );
+              },
+            ),
+          ),
           ListenableBuilder(
             listenable: cartProvider,
             builder: (context, child) {

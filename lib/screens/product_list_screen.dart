@@ -1,11 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import '../models/product.dart';
 import '../core/di/dependancy_manager.dart';
 import '../services/api_service.dart';
 import '../core/handlers/network_exceptions.dart';
+import '../providers/favorites_provider.dart';
 import 'product_detail_screen.dart';
 
 class ProductListScreen extends StatefulWidget {
@@ -51,8 +52,23 @@ class _ProductListScreenState extends State<ProductListScreen> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(
+              color: Theme.of(context).primaryColor,
+            ),
+            SizedBox(height: 16.h),
+            Text(
+              'Loading products...',
+              style: TextStyle(
+                fontSize: 16.sp,
+                color: Colors.grey[600],
+              ),
+            ),
+          ],
+        ),
       );
     }
 
@@ -63,23 +79,28 @@ class _ProductListScreenState extends State<ProductListScreen> {
           children: [
             Icon(Icons.error_outline, size: 60.sp, color: Colors.red),
             SizedBox(height: 16.h),
-            Text(
-              _errorMessage!,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.red,
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w500,
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              child: Text(
+                _errorMessage!,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: 24.h),
             ElevatedButton.icon(
               onPressed: _loadProducts,
               icon: const Icon(Icons.refresh),
               label: const Text('Retry'),
               style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).primaryColor,
+                foregroundColor: Colors.white,
                 padding: EdgeInsets.symmetric(
-                  horizontal: 24.w,
+                  horizontal: 32.w,
                   vertical: 12.h,
                 ),
                 shape: RoundedRectangleBorder(
@@ -97,12 +118,16 @@ class _ProductListScreenState extends State<ProductListScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.shopping_basket_outlined, size: 60.sp, color: Colors.grey),
+            Icon(
+              Icons.shopping_basket_outlined,
+              size: 60.sp,
+              color: Colors.grey,
+            ),
             SizedBox(height: 16.h),
             Text(
               'No products found.',
               style: TextStyle(
-                fontSize: 16.sp,
+                fontSize: 18.sp,
                 color: Colors.grey[600],
                 fontWeight: FontWeight.w500,
               ),
@@ -114,6 +139,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
     return RefreshIndicator(
       onRefresh: _loadProducts,
+      color: Theme.of(context).primaryColor,
       child: GridView.builder(
         padding: EdgeInsets.all(16.w),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -123,14 +149,14 @@ class _ProductListScreenState extends State<ProductListScreen> {
           mainAxisSpacing: 16.h,
         ),
         itemCount: _products.length,
-        itemBuilder: (context, index) {
-          final product = _products[index];
-          return ProductCard(product: product);
-        },
+        itemBuilder: (context, index) => ProductCard(
+          product: _products[index],
+        ),
       ),
     );
   }
 }
+
 class ProductCard extends StatelessWidget {
   final Product product;
 
@@ -154,88 +180,133 @@ class ProductCard extends StatelessWidget {
           ),
         ),
         borderRadius: BorderRadius.circular(12.r),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return Column(
-              children: [
-                // Image Section - 60% of card height
-                SizedBox(
-                  height: constraints.maxHeight * 0.6,
-                  child: ClipRRect(
+        child: Column(
+          children: [
+            // Image with favorite button overlay
+            Expanded(
+              flex: 3, // 60% of space
+              child: Stack(
+                children: [
+                  ClipRRect(
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(12.r),
                       topRight: Radius.circular(12.r),
                     ),
-                    child: Hero(
-                      tag: 'product-${product.id}',
-                      child: CachedNetworkImage(
-                        imageUrl: product.image,
-                        fit: BoxFit.contain,
-                        placeholder: (context, url) => Container(
-                          color: Colors.grey[200],
-                          child: Center(
+                    child: Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      padding: EdgeInsets.all(8.w),
+                      child: Hero(
+                        tag: 'product-${product.id}',
+                        child: CachedNetworkImage(
+                          imageUrl: product.image,
+                          fit: BoxFit.contain,
+                          placeholder: (context, url) => Center(
                             child: CircularProgressIndicator(
                               strokeWidth: 2.w,
+                              color: Theme.of(context).primaryColor,
                             ),
                           ),
-                        ),
-                        errorWidget: (context, url, error) => Container(
-                          color: Colors.grey[200],
-                          child: Icon(Icons.error, size: 24.sp),
+                          errorWidget: (context, url, error) => 
+                              Icon(Icons.error, size: 24.sp),
                         ),
                       ),
                     ),
                   ),
-                ),
-                // Content Section - 40% of card height
-                SizedBox(
-                  height: constraints.maxHeight * 0.4,
-                  child: Padding(
-                    padding: EdgeInsets.all(8.w),
-                    child: Column(
+                  // Favorite button
+                  Positioned(
+                    top: 8.h,
+                    right: 8.w,
+                    child: Consumer<FavoritesProvider>(
+                      builder: (context, favoritesProvider, _) => Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: IconButton(
+                          icon: Icon(
+                            favoritesProvider.isFavorite(product)
+                                ? Icons.favorite
+                                : Icons.favorite_border,
+                            size: 20.sp,
+                            color: Colors.red,
+                          ),
+                          onPressed: () => favoritesProvider.toggleFavorite(product),
+                          constraints: BoxConstraints(
+                            minWidth: 32.w,
+                            minHeight: 32.w,
+                          ),
+                          padding: EdgeInsets.zero,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Product details
+            Expanded(
+              flex: 2, // 40% of space
+              child: Padding(
+                padding: EdgeInsets.all(8.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        product.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 4.h),
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Title
                         Text(
-                          product.title,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                          '\$${product.price.toStringAsFixed(2)}',
                           style: TextStyle(
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w500,
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).primaryColor,
                           ),
                         ),
-                        // Price and Rating Row
                         Row(
                           children: [
-                            Text(
-                              '\$${product.price.toStringAsFixed(2)}',
-                              style: TextStyle(
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).primaryColor,
-                              ),
+                            Icon(
+                              Icons.star,
+                              size: 16.sp,
+                              color: Colors.amber,
                             ),
-                            const Spacer(),
-                            Icon(Icons.star, size: 16.sp, color: Colors.amber),
                             SizedBox(width: 4.w),
                             Text(
                               product.rating.rate.toString(),
                               style: TextStyle(
                                 fontSize: 12.sp,
                                 color: Colors.grey[600],
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],
                         ),
                       ],
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            );
-          }
+              ),
+            ),
+          ],
         ),
       ),
     );
