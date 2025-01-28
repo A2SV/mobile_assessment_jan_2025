@@ -92,8 +92,16 @@ class ProductDetailsScreen extends StatelessWidget {
                         onPressed: () {
                           if (favoritesProvider.isFavorite(product.id)) {
                             favoritesProvider.removeFromFavorites(product.id);
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                              content: Text('Removed from favorites'),
+                              duration: Duration(milliseconds: 200),
+                            ));
                           } else {
                             favoritesProvider.addToFavorites(product);
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                              content: Text('Added to favorites'),
+                              duration: Duration(milliseconds: 200),
+                            ));
                           }
                         },
                       ),
