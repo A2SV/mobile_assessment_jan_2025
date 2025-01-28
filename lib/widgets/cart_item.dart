@@ -1,57 +1,102 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../models/cart.dart';
-import '../providers/cart_provider.dart';
 
 class CartItemWidget extends StatelessWidget {
   final CartItem cartItem;
+  final Function onRemove;
+  final Function onIncrease;
+  final Function onDecrease;
 
-  const CartItemWidget({super.key, required this.cartItem});
+  const CartItemWidget({
+    super.key,
+    required this.cartItem,
+    required this.onRemove,
+    required this.onIncrease,
+    required this.onDecrease,
+  });
 
   @override
   Widget build(BuildContext context) {
-    // TODO: don't remove the dismissible widget
-    // use onDismissed method  for removing an item from the cart
-    return Dismissible(
-      key: ValueKey(cartItem.product.id),
-      background: Container(
-        color: Theme.of(context).indicatorColor,
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 20),
-        margin: const EdgeInsets.symmetric(
-          horizontal: 15,
-          vertical: 4,
-        ),
-        child: const Icon(
-          Icons.delete,
-          color: Colors.white,
-          size: 40,
-        ),
+    return Card(
+      margin: const EdgeInsets.symmetric(
+        horizontal: 15,
+        vertical: 4,
       ),
-      direction: DismissDirection.endToStart,
-      onDismissed: (direction) {
-        // TODO:  remove an item from the cart
-        // and make sure the item is removed from the cart
-      },
-      child: Card(
-        margin: const EdgeInsets.symmetric(
-          horizontal: 15,
-          vertical: 4,
-        ),
-        child: Padding(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      elevation: 5,
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Container(
           padding: const EdgeInsets.all(8),
-          child: ListTile(
-            leading: CircleAvatar(
-              child: Padding(
-                padding: const EdgeInsets.all(5),
-                child: Image.network(cartItem.product.image),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Colors.white,
+          ),
+          child: Column(
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CircleAvatar(
+                    backgroundColor: Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.all(5),
+                      child: Image.network(cartItem.product.image),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 250,
+                        child: Text(
+                          cartItem.product.title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        'Total: \$${cartItem.product.price * cartItem.quantity}',
+                        style: const TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-            ),
-            title: Text(cartItem.product.title),
-            subtitle:
-                Text('Total: \$${cartItem.product.price * cartItem.quantity}'),
-            // TODO:  add buttons to increase or decrease the quantity of the item in the cart
-            trailing: Text('${cartItem.quantity} x'),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  const Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.remove),
+                    onPressed: () {
+                      if (cartItem.quantity > 1) {
+                        onDecrease();
+                      } else {
+                        onRemove();
+                      }
+                    },
+                  ),
+                  Text('${cartItem.quantity} x'),
+                  IconButton(
+                    icon: const Icon(Icons.add),
+                    onPressed: () {
+                      onIncrease();
+                    },
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
