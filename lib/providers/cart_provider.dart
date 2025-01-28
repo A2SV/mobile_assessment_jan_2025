@@ -39,8 +39,21 @@ class CartProvider extends ChangeNotifier {
     }
   }
 
-  void clearCart() {
-    // TODO: Clear the cart
-    notifyListeners();
+ void clearCart() {
+  _cart.items.clear();
+  notifyListeners();
+}
+
+  Future<bool> checkout() async {
+    try {
+      // Simulate API call with delay
+      await Future.delayed(const Duration(seconds: 2));
+      
+      // Clear the cart after successful checkout
+      clearCart();
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }

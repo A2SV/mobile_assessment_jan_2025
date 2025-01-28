@@ -31,8 +31,8 @@ class CartItemWidget extends StatelessWidget {
         ),
       ),
       direction: DismissDirection.endToStart,
-      confirmDismiss: (direction) async {
-        return await showDialog(
+      confirmDismiss: (direction) {
+        return showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
             title: const Text('Are you sure?'),
@@ -52,6 +52,7 @@ class CartItemWidget extends StatelessWidget {
       },
       onDismissed: (direction) {
         cartProvider.removeFromCart(cartItem.product.id);
+        
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('${cartItem.product.title} removed from cart'),
@@ -59,7 +60,10 @@ class CartItemWidget extends StatelessWidget {
             action: SnackBarAction(
               label: 'UNDO',
               onPressed: () {
-                cartProvider.addToCart(cartItem.product, quantity: cartItem.quantity);
+                cartProvider.addToCart(
+                  cartItem.product,
+                  quantity: cartItem.quantity,
+                );
               },
             ),
           ),
@@ -113,32 +117,40 @@ class CartItemWidget extends StatelessWidget {
                 ),
               ],
             ),
-            trailing: SizedBox(
-              width: 120.w,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.remove),
-                    onPressed: cartItem.quantity > 1
-                        ? () => cartProvider.updateQuantity(
-                            cartItem.product.id, cartItem.quantity - 1)
-                        : null,
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: Icon(
+                    Icons.remove_circle_outline,
+                    color: cartItem.quantity > 1 
+                        ? Theme.of(context).primaryColor 
+                        : Colors.grey,
                   ),
-                  Text(
+                  onPressed: cartItem.quantity > 1
+                      ? () => cartProvider.updateQuantity(
+                          cartItem.product.id, cartItem.quantity - 1)
+                      : null,
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w),
+                  child: Text(
                     '${cartItem.quantity}',
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.add),
-                    onPressed: () => cartProvider.updateQuantity(
-                        cartItem.product.id, cartItem.quantity + 1),
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.add_circle_outline,
+                    color: Theme.of(context).primaryColor,
                   ),
-                ],
-              ),
+                  onPressed: () => cartProvider.updateQuantity(
+                      cartItem.product.id, cartItem.quantity + 1),
+                ),
+              ],
             ),
           ),
         ),
