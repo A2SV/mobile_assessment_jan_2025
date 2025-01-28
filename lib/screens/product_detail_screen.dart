@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_assessment_jan_2025/common_widgets/button/btn_gradient.dart';
 import 'package:provider/provider.dart';
 import '../models/product.dart';
 import '../providers/cart_provider.dart';
@@ -47,21 +48,24 @@ class ProductDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network(product.image, height: 300),
+            Align(
+              child: Image.network(product.image, height: 300),
+              alignment: Alignment.center,
+            ),
             const SizedBox(height: 16),
             Text('\$${product.price.toStringAsFixed(2)}',
-                style: const TextStyle(fontSize: 24)),
+                style: const TextStyle(fontSize: 18)),
             const SizedBox(height: 16),
             Text(product.description, style: const TextStyle(fontSize: 16)),
             const Spacer(),
-            ElevatedButton(
-              onPressed: () {
+            BtnGradient(
+              text: "Add to Cart",
+              action: () {
                 cartProvider.addToCart(product);
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Added to cart!')),
                 );
               },
-              child: const Text('Add to Cart'),
             ),
           ],
         ),

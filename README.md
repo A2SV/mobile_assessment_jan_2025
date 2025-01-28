@@ -1,3 +1,5 @@
+### Frehiwot Abebie Haile
+
 # A2SV Mobile Development Assessment
 
 Welcome to the Flutter Developer Assessment! This task evaluates your ability to work with APIs, manage state, and implement core app functionality. You’ll have 2 hours to complete the tasks below.
@@ -130,5 +132,13 @@ A: Yes
 Empty cart, invalid quantities, network failures.
 
 #### Ask Questions: If anything is unclear, don’t hesitate to ask!
+
+![Image](https://github.com/user-attachments/assets/a44a6347-f2e8-4757-aa48-c179bc66256e)
+
+![Image](https://github.com/user-attachments/assets/67f4ee31-e3c4-42de-a665-64e47ca5682f)
+
+![Image](https://github.com/user-attachments/assets/7e044eb1-d537-4467-a0ba-246c433f5cab)
+
+![Image](https://github.com/user-attachments/assets/1304f837-2cd8-46a5-b5dd-d90345ae6b75)
 
 ## Good luck! 🚀

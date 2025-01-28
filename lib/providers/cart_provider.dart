@@ -24,18 +24,30 @@ class CartProvider extends ChangeNotifier {
 
   void removeFromCart(int productId) {
     // TODO: Remove item with matching productId from cart
-
+    final cartToBEDeleted = _cart.items.firstWhere(
+      (item) => item.product.id == productId,
+      orElse: () => CartItem(product: Product.empty(), quantity: 0),
+    );
+    _cart.items.remove(cartToBEDeleted);
     notifyListeners();
   }
 
   void updateQuantity(int productId, int newQuantity) {
-    // TODO: Update quantity for item with productId
-    // TODO: If quantity <= 0, remove the item
+    final cartToBeUpdated = _cart.items.firstWhere(
+      (item) => item.product.id == productId,
+      orElse: () => CartItem(product: Product.empty(), quantity: 0),
+    );
+    if (newQuantity <= 0) {
+      _cart.items.remove(cartToBeUpdated);
+    } else {
+      cartToBeUpdated.quantity = newQuantity;
+    }
     notifyListeners();
   }
 
   void clearCart() {
     // TODO: Clear the cart
+    _cart.items.clear();
     notifyListeners();
   }
 }

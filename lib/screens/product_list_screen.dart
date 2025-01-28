@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_assessment_jan_2025/constants/app_sizes.dart';
+import 'package:mobile_assessment_jan_2025/widgets/product_item.dart';
+import 'package:mobile_assessment_jan_2025/widgets/product_item_hori.dart';
 import '../models/product.dart';
 import '../services/api_service.dart';
 
@@ -77,24 +80,94 @@ class _ProductListScreenState extends State<ProductListScreen> {
       );
     }
 
-    return ListView.builder(
-      itemCount: _products.length,
-      itemBuilder: (context, index) {
-        final product = _products[index];
-        return InkWell(
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => ProductDetailScreen(product: product),
-            ),
+    return Column(children: [
+      _buildHorizontalSection("Best Sellers", _products),
+      gapH12,
+      Text("All Products ",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+      gapH12,
+      Expanded(
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2, // Two columns
+            crossAxisSpacing: 10, // Spacing between columns
+            mainAxisSpacing: 10, // Spacing between rows
+            childAspectRatio: 0.85, // Adjust as needed for aspect ratio
           ),
-          child: ListTile(
-            leading: Image.network(product.image, width: 50, height: 50),
-            title: Text(product.title),
-            subtitle: Text('\$${product.price.toStringAsFixed(2)}'),
-          ),
-        );
-      },
-    );
+          shrinkWrap: true,
+          itemCount: _products.length,
+          // physics: const NeverScrollableScrollPhysics(),
+          itemBuilder: (context, index) {
+            final product = _products[index];
+            return InkWell(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ProductDetailScreen(product: product),
+                ),
+              ),
+              child: ProductItem(
+                title: product.title.length > 10
+                    ? '${product.title.substring(0, 10)}...' // Truncate title with ellipsis
+                    : product.title,
+                price: product.price,
+                imageUrl: product.image,
+              ),
+            );
+          },
+        ),
+      )
+    ]);
   }
+}
+
+// divide the products in to five
+
+// show in horizontal scroll
+//give it title for each section u can be free on that like best selling, new arrivals, etc
+//1 show in grid
+Widget _buildHorizontalSection(String title, List<Product> products) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          title,
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+      ),
+      SizedBox(
+        height: 220,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: 10,
+          itemBuilder: (context, index) {
+            final product = products[index];
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: GestureDetector(
+                  onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ProductDetailScreen(product: product),
+                        ),
+                      ),
+                  child: ProductItemHori(
+                    title: product.title,
+                    price: product.price,
+                    imageUrl: product.image,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ProductDetailScreen(product: product),
+                      ),
+                    ),
+                  )),
+            );
+          },
+        ),
+      ),
+    ],
+  );
 }
