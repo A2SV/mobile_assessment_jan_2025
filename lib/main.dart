@@ -5,8 +5,10 @@ import 'package:provider/provider.dart';
 import 'providers/cart_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/cart_screen.dart';
+import 'core/di/dependancy_manager.dart';
 
 void main() {
+  setUpDependencies();
   runApp(const MyApp());
 }
 

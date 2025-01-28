@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/product.dart';
 import '../services/api_service.dart';
+import '../core/handlers/network_exceptions.dart';
+import '../core/di/dependancy_manager.dart';
 
 import 'product_detail_screen.dart';
 
@@ -13,7 +15,6 @@ class ProductListScreen extends StatefulWidget {
 
 class _ProductListScreenState extends State<ProductListScreen> {
   List<Product> _products = [];
-  final ApiService _apiService = ApiService();
   bool _isLoading = true;
   String? _errorMessage;
 
@@ -28,18 +29,21 @@ class _ProductListScreenState extends State<ProductListScreen> {
       _isLoading = true;
       _errorMessage = null;
     });
-    try {
-      final products = await _apiService.fetchProducts();
-      setState(() {
-        _products = products;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-        _errorMessage = 'Failed to load products. Please try again.';
-      });
-    }
+    
+    final result = await getIt<ApiService>().fetchProducts();
+    
+    setState(() {
+      result.when(
+        success: (products) {
+          _products = products;
+          _isLoading = false;
+        },
+        failure: (error) {
+          _isLoading = false;
+          _errorMessage = NetworkExceptions.getErrorMessage(error);
+        },
+      );
+    });
   }
 
   @override
