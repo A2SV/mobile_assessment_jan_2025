@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_assessment_jan_2025/models/product.dart';
+import 'package:mobile_assessment_jan_2025/providers/favorites_provider.dart';
 import 'package:mobile_assessment_jan_2025/screens/cart_screen.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
@@ -12,6 +13,7 @@ class ProductDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
+    final favoritesProvider = Provider.of<FavoritesProvider>(context);
 
     return Scaffold(
       body: Stack(
@@ -64,19 +66,39 @@ class ProductDetailsScreen extends StatelessWidget {
                 ),
 
                 // Product Image with Circular Background
-                Center(
-                  child: Container(
-                    height: 250,
-                    width: 250,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white,
+                Stack(
+                  children: [
+                    Center(
+                      child: Container(
+                        height: 250,
+                        width: 250,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Image.network(product.image, fit: BoxFit.contain),
+                        ),
+                      ),
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Image.network(product.image, fit: BoxFit.contain),
+                    Positioned(
+                      top: 12,
+                      right: 48,
+                      child: IconButton(
+                        icon: favoritesProvider.isFavorite(product.id)
+                            ? const Icon(Icons.favorite, color: Colors.red)
+                            : const Icon(Icons.favorite_border, color: Colors.red),
+                        onPressed: () {
+                          if (favoritesProvider.isFavorite(product.id)) {
+                            favoritesProvider.removeFromFavorites(product.id);
+                          } else {
+                            favoritesProvider.addToFavorites(product);
+                          }
+                        },
+                      ),
                     ),
-                  ),
+                  ],
                 ),
 
                 const SizedBox(height: 16),
@@ -93,6 +115,8 @@ class ProductDetailsScreen extends StatelessWidget {
                   '\$${product.price.toStringAsFixed(2)}',
                   style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.orange),
                 ),
+
+                const SizedBox(height: 8),
 
                 const SizedBox(height: 8),
 
