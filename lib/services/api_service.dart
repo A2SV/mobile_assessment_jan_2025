@@ -1,17 +1,30 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+
 import '../models/product.dart';
-import '../models/cart.dart';
 
 class ApiService {
   static const String _baseUrl = 'https://fakestoreapi.com';
 
   Future<List<Product>> fetchProducts() async {
-    // TODO: Fetch products from $_baseUrl/products
-    //  Parse JSON response into List<Product>
-    //  Handle errors (e.g., non-200 status codes)
-    // https://fakestoreapi.com/docs for reference
+    const String url = 'https://fakestoreapi.com/products';
 
-    throw UnimplementedError();
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        // Decode the JSON response into a list of products
+        final List<dynamic> productJsonList = jsonDecode(response.body);
+
+        // Map the JSON objects to Product instances
+        return productJsonList.map((json) => Product.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load products: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('Error: $e');
+      return [];
+    }
   }
 }

@@ -29,7 +29,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
       _errorMessage = null;
     });
     try {
-      final products = await _apiService.fetchProducts();
+      final List<Product> products = await _apiService.fetchProducts();
+
       setState(() {
         _products = products;
         _isLoading = false;
