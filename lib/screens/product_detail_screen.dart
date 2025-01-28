@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:mobile_assessment_jan_2025/app/common/ui_helpers.dart';
+import 'package:mobile_assessment_jan_2025/widgets/custom_button.dart';
+import 'package:mobile_assessment_jan_2025/widgets/image_builder.dart';
 import 'package:provider/provider.dart';
+import '../app/common/app_text_style.dart';
 import '../models/product.dart';
 import '../providers/cart_provider.dart';
 import 'cart_screen.dart';
@@ -38,32 +43,70 @@ class ProductDetailScreen extends StatelessWidget {
                     ),
                   ),
                 );
-              })
+              }),
+          horizontalSpaceMiddle,
         ],
       ),
       // TODO: improve the UI of the product detail screen
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Image.network(product.image, height: 300),
-            const SizedBox(height: 16),
-            Text('\$${product.price.toStringAsFixed(2)}',
-                style: const TextStyle(fontSize: 24)),
-            const SizedBox(height: 16),
-            Text(product.description, style: const TextStyle(fontSize: 16)),
-            const Spacer(),
-            ElevatedButton(
-              onPressed: () {
-                cartProvider.addToCart(product);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Added to cart!')),
-                );
-              },
-              child: const Text('Add to Cart'),
+      body: SingleChildScrollView(
+        child: SizedBox(
+          height: screenHeight(context),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ImageBuilder(
+                  image: product.image,
+                  height: screenHeight(context) * .3,
+                  fit: BoxFit.contain,
+                ),
+                const SizedBox(height: 16),
+                Text('\$${product.price.toStringAsFixed(2)}',
+                    style: const TextStyle(fontSize: 24)),
+                Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                  RatingBarIndicator(
+                      rating: 3,
+                      itemSize: 18,
+                      itemCount: 1,
+                      itemPadding: const EdgeInsets.only(right: 0.0),
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                            onTap: () {},
+                            child: const Icon(Icons.star, color: Colors.amber));
+                      }),
+                  Text(
+                    product.rating.rate.toStringAsFixed(1),
+                    style: bold.copyWith(color: Colors.black38),
+                  ),
+                  Text(
+                    '(${product.rating.count} reviews)',
+                    style: regular.copyWith(
+                      color: Colors.grey,
+                    ),
+                  )
+                ]),
+                const SizedBox(height: 16),
+                Text(product.description,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                    )),
+              ],
             ),
-          ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.only(
+            right: mediumSize, left: mediumSize, bottom: middleSize),
+        child: CustomButton(
+          onTap: () {
+            cartProvider.addToCart(product);
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text('Added to cart!')));
+          },
+          text: 'Add to Cart',
         ),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_assessment_jan_2025/widgets/cart_calculator_widget.dart';
 import 'package:provider/provider.dart';
 import '../models/cart.dart';
 import '../providers/cart_provider.dart';
@@ -10,6 +11,7 @@ class CartItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cartProvider = Provider.of<CartProvider>(context, listen: false);
     // TODO: don't remove the dismissible widget
     // use onDismissed method  for removing an item from the cart
     return Dismissible(
@@ -30,8 +32,7 @@ class CartItemWidget extends StatelessWidget {
       ),
       direction: DismissDirection.endToStart,
       onDismissed: (direction) {
-        // TODO:  remove an item from the cart
-        // and make sure the item is removed from the cart
+        cartProvider.removeFromCart(cartItem.product.id);
       },
       child: Card(
         margin: const EdgeInsets.symmetric(
@@ -48,9 +49,17 @@ class CartItemWidget extends StatelessWidget {
               ),
             ),
             title: Text(cartItem.product.title),
-            subtitle:
-                Text('Total: \$${cartItem.product.price * cartItem.quantity}'),
-            // TODO:  add buttons to increase or decrease the quantity of the item in the cart
+            subtitle: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                      'Total: \$${(cartItem.product.price * cartItem.quantity).toStringAsFixed(2)}'),
+                  CartCalculatorWidget(
+                      onAdd: () => cartProvider.updateQuantity(
+                          cartItem.product.id, cartItem.quantity + 1),
+                      onSubstact: () => cartProvider.updateQuantity(
+                          cartItem.product.id, cartItem.quantity - 1))
+                ]),
             trailing: Text('${cartItem.quantity} x'),
           ),
         ),

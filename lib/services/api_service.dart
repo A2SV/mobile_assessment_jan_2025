@@ -1,16 +1,27 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart';
+import 'package:mobile_assessment_jan_2025/services/api_call_service.dart';
 import '../models/product.dart';
-import '../models/cart.dart';
 
 class ApiService {
   static const String _baseUrl = 'https://fakestoreapi.com';
+  static const String _products = '/products';
 
   Future<List<Product>> fetchProducts() async {
-    // TODO: Fetch products from $_baseUrl/products
-    //  Parse JSON response into List<Product>
-    //  Handle errors (e.g., non-200 status codes)
-    // https://fakestoreapi.com/docs for reference
+    try {
+      String url = '$_baseUrl$_products';
+      var response = await ApiCallService.getCall(url, needToken: false);
+      var body = jsonDecode(response.body);
+      if (statusCodeSuccess(response.statusCode)) {
+        // success
+        return Product.listProvider(body);
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error2938: $e');
+      }
+      return <Product>[];
+    }
 
     throw UnimplementedError();
   }
