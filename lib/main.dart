@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mobile_assessment_jan_2025/screens/favorite_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/cart_provider.dart';
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
         title: 'E-commerce App',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          fontFamily: GoogleFonts.poppins().fontFamily,
+          textTheme: GoogleFonts.poppinsTextTheme(),
           scaffoldBackgroundColor: Colors.white,
           appBarTheme: const AppBarTheme(
             backgroundColor: Colors.white,
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
         home: const HomeScreen(),
         routes: {
           CartScreen.routeName: (ctx) => const CartScreen(),
+          '/favorites': (ctx) => const FavoritesScreen(),
         },
       ),
     );
