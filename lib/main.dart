@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mobile_assessment_jan_2025/providers/favorite_provider.dart';
+import 'package:mobile_assessment_jan_2025/screens/favorite_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/cart_provider.dart';
@@ -15,8 +17,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (ctx) => CartProvider(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (ctx) => CartProvider()),
+        ChangeNotifierProvider(create: (ctx) => FavoriteProvider()),
+      ],
       child: MaterialApp(
         title: 'E-commerce App',
         debugShowCheckedModeBanner: false,
@@ -32,6 +37,7 @@ class MyApp extends StatelessWidget {
         home: const HomeScreen(),
         routes: {
           CartScreen.routeName: (ctx) => const CartScreen(),
+          FavoriteScreen.routeName: (ctx) => const FavoriteScreen()
         },
       ),
     );

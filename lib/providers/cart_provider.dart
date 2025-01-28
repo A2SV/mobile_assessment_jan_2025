@@ -4,6 +4,7 @@ import '../models/product.dart';
 
 class CartProvider extends ChangeNotifier {
   final Cart _cart = Cart();
+  //List<CartItem> _items = [];
 
   Cart get cart => _cart;
 
@@ -23,19 +24,27 @@ class CartProvider extends ChangeNotifier {
   }
 
   void removeFromCart(int productId) {
-    // TODO: Remove item with matching productId from cart
+    _cart.items.removeWhere((item) => item.product.id == productId);
 
     notifyListeners();
   }
 
   void updateQuantity(int productId, int newQuantity) {
-    // TODO: Update quantity for item with productId
-    // TODO: If quantity <= 0, remove the item
+    if (newQuantity <= 0) {
+      removeFromCart(productId);
+    } else {
+      final existingItem = _cart.items.firstWhere(
+        (item) => item.product.id == productId,
+        orElse: () => CartItem(product: Product.empty(), quantity: 0),
+      );
+      existingItem.quantity = newQuantity;
+    }
     notifyListeners();
   }
 
   void clearCart() {
     // TODO: Clear the cart
+    _cart.items.clear();
     notifyListeners();
   }
 }

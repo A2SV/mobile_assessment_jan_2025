@@ -10,8 +10,6 @@ class CartItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: don't remove the dismissible widget
-    // use onDismissed method  for removing an item from the cart
     return Dismissible(
       key: ValueKey(cartItem.product.id),
       background: Container(
@@ -30,8 +28,8 @@ class CartItemWidget extends StatelessWidget {
       ),
       direction: DismissDirection.endToStart,
       onDismissed: (direction) {
-        // TODO:  remove an item from the cart
-        // and make sure the item is removed from the cart
+        Provider.of<CartProvider>(context, listen: false)
+            .removeFromCart(cartItem.product.id);
       },
       child: Card(
         margin: const EdgeInsets.symmetric(
@@ -50,8 +48,28 @@ class CartItemWidget extends StatelessWidget {
             title: Text(cartItem.product.title),
             subtitle:
                 Text('Total: \$${cartItem.product.price * cartItem.quantity}'),
-            // TODO:  add buttons to increase or decrease the quantity of the item in the cart
-            trailing: Text('${cartItem.quantity} x'),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.remove),
+                  onPressed: () {
+                    Provider.of<CartProvider>(context, listen: false)
+                        .updateQuantity(
+                            cartItem.product.id, cartItem.quantity - 1);
+                  },
+                ),
+                Text('${cartItem.quantity} x'),
+                IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: () {
+                    Provider.of<CartProvider>(context, listen: false)
+                        .updateQuantity(
+                            cartItem.product.id, cartItem.quantity + 1);
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

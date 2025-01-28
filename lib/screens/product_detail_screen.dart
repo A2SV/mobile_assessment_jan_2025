@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_assessment_jan_2025/providers/favorite_provider.dart';
+import 'package:mobile_assessment_jan_2025/screens/favorite_screen.dart';
 import 'package:provider/provider.dart';
 import '../models/product.dart';
 import '../providers/cart_provider.dart';
@@ -12,6 +14,8 @@ class ProductDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context, listen: false);
+    final favoriteProvider =
+        Provider.of<FavoriteProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: Text(product.title),
@@ -27,17 +31,34 @@ class ProductDetailScreen extends StatelessWidget {
               listenable: cartProvider,
               builder: (context, child) {
                 return Badge.count(
-                  padding: EdgeInsets.zero,
-                  count: cartProvider.cart.items.length,
-                  isLabelVisible: cartProvider.cart.items.isNotEmpty,
-                  child: IconButton(
-                    icon: const Icon(Icons.shopping_cart),
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const CartScreen()),
-                    ),
-                  ),
-                );
+                    padding: EdgeInsets.zero,
+                    count: cartProvider.cart.items.length,
+                    isLabelVisible: cartProvider.cart.items.isNotEmpty,
+                    child: Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(
+                            Icons.favorite,
+                            color: Colors.red,
+                          ),
+                          onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const FavoriteScreen()),
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.shopping_cart,
+                          ),
+                          onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const CartScreen()),
+                          ),
+                        ),
+                      ],
+                    ));
               })
         ],
       ),
@@ -62,6 +83,16 @@ class ProductDetailScreen extends StatelessWidget {
                 );
               },
               child: const Text('Add to Cart'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                cartProvider.addToCart(product);
+                favoriteProvider.addToFavorite(product);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Added to Favorite!')),
+                );
+              },
+              child: const Text('Add to Favorite'),
             ),
           ],
         ),
