@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_assessment_jan_2025/widgets/product_shimmer.dart';
 import '../models/product.dart';
 import '../services/api_service.dart';
+import '../providers/product_provider.dart';
+import 'package:provider/provider.dart';
+import '../providers/favorite_provider.dart';
 
 import 'product_detail_screen.dart';
 
@@ -30,6 +34,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
     });
     try {
       final products = await _apiService.fetchProducts();
+      Provider.of<ProductProvider>(context, listen: false)
+          .setProducts(products);
       setState(() {
         _products = products;
         _isLoading = false;
@@ -45,7 +51,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return ListView.builder(
+        itemCount: 8,
+        itemBuilder: (context, _) {
+          return ProductShimmer();
+        },
+      );
     }
 
     if (_errorMessage != null) {
@@ -88,10 +99,104 @@ class _ProductListScreenState extends State<ProductListScreen> {
               builder: (_) => ProductDetailScreen(product: product),
             ),
           ),
-          child: ListTile(
-            leading: Image.network(product.image, width: 50, height: 50),
-            title: Text(product.title),
-            subtitle: Text('\$${product.price.toStringAsFixed(2)}'),
+          child: Stack(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    // Product Image
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.network(
+                        product.image,
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    // Product Details
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            product.title,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '\$${product.price.toStringAsFixed(2)}',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Add Extra Icons/Actions (Optional)
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 18,
+                      color: Colors.grey[600],
+                    ),
+                  ],
+                ),
+              ),
+              // Add the favorite button
+              Positioned(
+                top: 12,
+                right: 20,
+                child: Consumer<FavoriteProvider>(
+                  builder: (context, favoriteProvider, _) {
+                    final isFavorite = favoriteProvider.isFavorite(product.id);
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: IconButton(
+                          icon: Icon(
+                            isFavorite ? Icons.favorite : Icons.favorite_border,
+                            size: 20,
+                            color: isFavorite ? Colors.red : Colors.grey,
+                          ),
+                          onPressed: () {
+                            favoriteProvider.toggleFavorite(product.id);
+                            setState(() {});
+                          }),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         );
       },
