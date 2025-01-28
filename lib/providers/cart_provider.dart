@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/cart.dart';
-import '../models/product.dart';
+import '../screens/products/model/product_model.dart';
 
 class CartProvider extends ChangeNotifier {
   final Cart _cart = Cart();
