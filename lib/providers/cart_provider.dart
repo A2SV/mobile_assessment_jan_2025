@@ -23,19 +23,25 @@ class CartProvider extends ChangeNotifier {
   }
 
   void removeFromCart(int productId) {
-    // TODO: Remove item with matching productId from cart
-
+    _cart.items.removeWhere((item) => item.product.id == productId);
     notifyListeners();
   }
 
   void updateQuantity(int productId, int newQuantity) {
-    // TODO: Update quantity for item with productId
-    // TODO: If quantity <= 0, remove the item
-    notifyListeners();
+    final index =
+        _cart.items.indexWhere((item) => item.product.id == productId);
+    if (index != -1) {
+      if (newQuantity <= 0) {
+        _cart.items.removeAt(index);
+      } else {
+        _cart.items[index].quantity = newQuantity;
+      }
+      notifyListeners();
+    }
   }
 
   void clearCart() {
-    // TODO: Clear the cart
+    _cart.items.clear();
     notifyListeners();
   }
 }
