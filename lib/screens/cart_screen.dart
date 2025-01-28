@@ -17,6 +17,8 @@ class _CartScreenState extends State<CartScreen> {
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
 
+    final totalPrice = cartProvider.cart.totalPrice;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your Cart'),
@@ -26,43 +28,43 @@ class _CartScreenState extends State<CartScreen> {
         children: [
           Expanded(
             child: ListView.builder(
-              itemCount: cartProvider.cart.items.length,
-              itemBuilder: (ctx, i) => Dismissible(
-                key: ValueKey(cartProvider.cart.items[i].product.id),
-                background: Container(
-                  color: Colors.red,
-                  alignment: Alignment.centerRight,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: const Icon(Icons.delete, color: Colors.white),
-                ),
-                direction: DismissDirection.endToStart,
-                onDismissed: (direction) {
-                  cartProvider.removeFromCart(cartProvider.cart.items[i].product.id);
-                  setState(() {});
-                },
-                child: Column(
-                  children: [
-                    CartItemWidget(
-                      cartItem: cartProvider.cart.items[i],
-                      onDecrease: () {
-                        cartProvider.updateQuantity(
-                            cartProvider.cart.items[i].product.id, cartProvider.cart.items[i].quantity - 1);
-                        setState(() {});
-                      },
-                      onIncrease: () {
-                        cartProvider.updateQuantity(
-                            cartProvider.cart.items[i].product.id, cartProvider.cart.items[i].quantity + 1);
-                        setState(() {});
-                      },
-                      onRemove: () {
-                        cartProvider.removeFromCart(cartProvider.cart.items[i].product.id);
-                        setState(() {});
-                      },
+                itemCount: cartProvider.cart.items.length,
+                itemBuilder: (ctx, i) {
+                  final item = cartProvider.cart.items[i];
+                  return Dismissible(
+                    key: ValueKey(item.product.id),
+                    background: Container(
+                      color: Colors.red,
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: const Icon(Icons.delete, color: Colors.white),
                     ),
-                  ],
-                ),
-              ),
-            ),
+                    direction: DismissDirection.endToStart,
+                    onDismissed: (direction) {
+                      cartProvider.removeFromCart(cartProvider.cart.items[i].product.id);
+                      setState(() {});
+                    },
+                    child: Column(
+                      children: [
+                        CartItemWidget(
+                          cartItem: item,
+                          onDecrease: () {
+                            cartProvider.updateQuantity(item.product.id, item.quantity - 1);
+                            setState(() {});
+                          },
+                          onIncrease: () {
+                            cartProvider.updateQuantity(item.product.id, item.quantity + 1);
+                            setState(() {});
+                          },
+                          onRemove: () {
+                            cartProvider.removeFromCart(item.product.id);
+                            setState(() {});
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                }),
           ),
           Card(
             margin: const EdgeInsets.all(15),
@@ -81,7 +83,7 @@ class _CartScreenState extends State<CartScreen> {
                         ),
                       ),
                       Text(
-                        '\$${cartProvider.cart.items.fold(0.0, (total, item) => total + (item.product.price * item.quantity)).toStringAsFixed(2)}',
+                        '\$$totalPrice',
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -108,11 +110,18 @@ class _CartScreenState extends State<CartScreen> {
                                     onPressed: () {
                                       cartProvider.clearCart();
                                       Navigator.of(ctx).pop();
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                          content: Text('Order placed successfully!'),
-                                        ),
-                                      );
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                            const SnackBar(
+                                              content: Text('Order placed successfully!'),
+                                              backgroundColor: Colors.green,
+                                              duration: Duration(milliseconds: 800),
+                                            ),
+                                          )
+                                          .closed
+                                          .then((_) {
+                                        Navigator.of(context).pop();
+                                      });
                                     },
                                     child: const Text('Confirm'),
                                   ),
@@ -121,7 +130,7 @@ class _CartScreenState extends State<CartScreen> {
                             );
                           },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange[900],
+                      backgroundColor: Color(0xFF1b1564),
                       minimumSize: const Size(double.infinity, 50),
                     ),
                     child: const Text(
@@ -136,6 +145,7 @@ class _CartScreenState extends State<CartScreen> {
               ),
             ),
           ),
+          const SizedBox(height: 16),
         ],
       ),
     );
