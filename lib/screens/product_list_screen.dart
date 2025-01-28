@@ -1,10 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mobile_assessment_jan_2025/services/api_service.dart';
 import 'package:provider/provider.dart';
 import '../models/product.dart';
 import '../core/di/dependancy_manager.dart';
-import '../services/api_service.dart';
+import '../services/api_service_implementation.dart';
 import '../core/handlers/network_exceptions.dart';
 import '../providers/favorites_provider.dart';
 import 'product_detail_screen.dart';
