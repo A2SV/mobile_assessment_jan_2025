@@ -8,10 +8,16 @@ class ApiService {
 
   Future<List<Product>> fetchProducts() async {
     // TODO: Fetch products from $_baseUrl/products
-    //  Parse JSON response into List<Product>
-    //  Handle errors (e.g., non-200 status codes)
-    // https://fakestoreapi.com/docs for reference
-
-    throw UnimplementedError();
+    try {
+      final response = await http.get(Uri.parse('$_baseUrl/products'));
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        return data.map((json) => Product.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load products');
+      }
+    } catch (e) {
+      throw Exception('An error occurred while fetching quizzes');
+    }
   }
 }

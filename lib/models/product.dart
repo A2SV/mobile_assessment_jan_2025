@@ -19,6 +19,18 @@ class Product {
     required this.rating,
   });
 
+  factory Product.fromJson(Map<String, dynamic> json) {
+    return Product(
+      id: json['id'],
+      title: json['title'],
+      price: json['price'].toDouble(),
+      image: json['image'],
+      description: json['description'],
+      category: json['category'],
+      rating: Rating.fromJson(json['rating']),
+    );
+  }
+
   factory Product.empty() {
     return Product(
       id: -1,
