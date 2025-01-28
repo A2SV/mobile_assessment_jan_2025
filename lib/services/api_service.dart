@@ -13,7 +13,6 @@ import '../core/handlers/http_service.dart';
 
 class ApiService {
   final HttpService httpService;
-  static const String _baseUrl = 'https://fakestoreapi.com';
 
   ApiService({required this.httpService});
 
@@ -26,7 +25,7 @@ class ApiService {
         );
       }
 
-      final client = httpService.client();
+      final client = httpService.client(requireAuth: false);
       final response = await client.get('/products');
       
       if (response.statusCode == 200) {
