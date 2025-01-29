@@ -1,5 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile_assessment_jan_2025/widgets/product_tile.dart';
+import 'package:provider/provider.dart';
 import '../models/product.dart';
+import '../providers/favorite_provider.dart';
 import '../services/api_service.dart';
 
 import 'product_detail_screen.dart';
@@ -24,6 +29,15 @@ class _ProductListScreenState extends State<ProductListScreen> {
   }
 
   Future<void> _loadProducts() async {
+    final List<ConnectivityResult> connectivityResult =
+        await (Connectivity().checkConnectivity());
+    if (connectivityResult.contains(ConnectivityResult.none) == true) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = 'Please check your connection';
+      });
+      return;
+    }
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -88,11 +102,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
               builder: (_) => ProductDetailScreen(product: product),
             ),
           ),
-          child: ListTile(
-            leading: Image.network(product.image, width: 50, height: 50),
-            title: Text(product.title),
-            subtitle: Text('\$${product.price.toStringAsFixed(2)}'),
-          ),
+          child: ProductTile(product: product),
         );
       },
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mobile_assessment_jan_2025/providers/favorite_provider.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/cart_provider.dart';
@@ -15,8 +16,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (ctx) => CartProvider(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider(create: (_) => FavoriteProvider()),
+      ],
       child: MaterialApp(
         title: 'E-commerce App',
         debugShowCheckedModeBanner: false,

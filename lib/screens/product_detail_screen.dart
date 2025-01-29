@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/product.dart';
@@ -47,7 +48,10 @@ class ProductDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network(product.image, height: 300),
+            Hero(
+                tag: 'item${product.id}',
+                child:
+                    CachedNetworkImage(imageUrl: product.image, height: 300)),
             const SizedBox(height: 16),
             Text('\$${product.price.toStringAsFixed(2)}',
                 style: const TextStyle(fontSize: 24)),

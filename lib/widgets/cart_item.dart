@@ -10,6 +10,8 @@ class CartItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cartProvider = Provider.of<CartProvider>(context, listen: false);
+
     // TODO: don't remove the dismissible widget
     // use onDismissed method  for removing an item from the cart
     return Dismissible(
@@ -24,7 +26,7 @@ class CartItemWidget extends StatelessWidget {
         ),
         child: const Icon(
           Icons.delete,
-          color: Colors.white,
+          color: Colors.red,
           size: 40,
         ),
       ),
@@ -32,6 +34,12 @@ class CartItemWidget extends StatelessWidget {
       onDismissed: (direction) {
         // TODO:  remove an item from the cart
         // and make sure the item is removed from the cart
+        cartProvider.removeFromCart(cartItem.product.id);
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Product removed from cart')),
+          );
+        }
       },
       child: Card(
         margin: const EdgeInsets.symmetric(
@@ -48,8 +56,33 @@ class CartItemWidget extends StatelessWidget {
               ),
             ),
             title: Text(cartItem.product.title),
-            subtitle:
+            subtitle: Row(
+              children: [
                 Text('Total: \$${cartItem.product.price * cartItem.quantity}'),
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        cartProvider.updateQuantity(
+                          cartItem.product.id,
+                          -1,
+                        );
+                      },
+                      icon: Icon(Icons.remove),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        cartProvider.updateQuantity(
+                          cartItem.product.id,
+                          1,
+                        );
+                      },
+                      icon: Icon(Icons.add),
+                    ),
+                  ],
+                )
+              ],
+            ),
             // TODO:  add buttons to increase or decrease the quantity of the item in the cart
             trailing: Text('${cartItem.quantity} x'),
           ),

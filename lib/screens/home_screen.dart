@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_assessment_jan_2025/providers/cart_provider.dart';
+import 'package:mobile_assessment_jan_2025/screens/favorite_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'cart_screen.dart';
@@ -15,6 +16,16 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Products'),
         actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => FavoriteScreen(),
+                ),
+              );
+            },
+            icon: Icon(Icons.favorite),
+          ),
           ListenableBuilder(
               listenable: cartProvider,
               builder: (context, child) {
